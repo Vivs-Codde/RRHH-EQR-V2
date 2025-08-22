@@ -26,10 +26,12 @@ class SwaggerCorsMiddleware
 
         // Add CORS headers with extra permissive settings for Swagger docs
         $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-        $response->headers->set('Access-Control-Allow-Headers', '*');
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD');
+        $response->headers->set('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization, X-Auth-Token');
         $response->headers->set('Access-Control-Allow-Credentials', 'true');
         $response->headers->set('Access-Control-Max-Age', '86400');
+        // Asegurar que se permiten los esquemas http y https
+        $response->headers->set('Access-Control-Allow-Schemes', 'http, https');
         
         return $response;
     }
