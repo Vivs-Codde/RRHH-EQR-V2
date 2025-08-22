@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Documentation</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Intentar cargar la documentación usando fetch
+            fetch('http://127.0.0.1:8000/api/documentation')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.status);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('status').textContent = 'Conexión exitosa a la API';
+                    document.getElementById('status').style.color = 'green';
+                })
+                .catch(error => {
+                    document.getElementById('status').textContent = 'Error al conectar: ' + error.message;
+                    document.getElementById('status').style.color = 'red';
+                    console.error('Error:', error);
+                });
+            
+            // También probar la conexión a la API JSON
+            fetch('http://127.0.0.1:8000/docs/api-docs.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('json-status').textContent = 'Conexión exitosa al JSON de la API';
+                    document.getElementById('json-status').style.color = 'green';
+                    document.getElementById('json-content').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('json-status').textContent = 'Error al conectar al JSON: ' + error.message;
+                    document.getElementById('json-status').style.color = 'red';
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</head>
+<body>
+    <h1>Prueba de conexión a API Documentation</h1>
+    <p>Estado de la conexión a la documentación: <span id="status">Comprobando...</span></p>
+    <p>Estado de la conexión al JSON: <span id="json-status">Comprobando...</span></p>
+    <h2>Contenido JSON de la API:</h2>
+    <pre id="json-content">Cargando...</pre>
+</body>
+</html>
