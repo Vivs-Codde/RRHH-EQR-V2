@@ -18,6 +18,110 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
     /**
+     * Registrar un nuevo usuario
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     * 
+     * @OA\Post(
+     *     path="/api/register",
+     *     operationId="register",
+     *     tags={"Autenticación"},
+     *     summary="Registrar nuevo usuario",
+     *     description="Crea un nuevo usuario en el sistema y retorna un token de autenticación",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name", "email", "password"},
+     *             @OA\Property(property="name", type="string", example="John Doe", description="Nombre completo del usuario"),
+     *             @OA\Property(property="email", type="string", format="email", example="usuario@ejemplo.com", description="Correo electrónico (único)"),
+     *             @OA\Property(property="password", type="string", format="password", example="contraseña", description="Contraseña (mínimo 8 caracteres)")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Registro exitoso",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Usuario registrado exitosamente"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="user",
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="John Doe"),
+     *                     @OA\Property(property="email", type="string", format="email", example="usuario@ejemplo.com"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2025-08-21T20:00:00.000000Z"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-08-21T20:00:00.000000Z")
+     *                 ),
+     *                 @OA\Property(property="token", type="string", example="1|abcdefghijklmnopqrstuvwxyz")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Error de validación"),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="email",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="El correo ya está en uso.")
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function register(Request $request)
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+            ]);
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            $token = $user->createToken('auth-token')->plainTextToken;
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Usuario registrado exitosamente',
+                'data' => [
+                    'user' => $user,
+                    'token' => $token
+                ]
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Error al registrar el usuario',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Iniciar sesión y crear token
      *
      * @param  \Illuminate\Http\Request  $request

@@ -16,14 +16,15 @@ use App\Http\Controllers\Api\AuthController;
 |
 */
 
-// Rutas de autenticación
+// Rutas de autenticación (públicas)
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 
 // Rutas protegidas que requieren autenticación
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
     
-    // Rutas de API para usuarios
-    Route::apiResource('users', UserController::class);
+    // Rutas de API para usuarios (excepto crear/registrar)
+    Route::apiResource('users', UserController::class)->except(['store']);
 });
