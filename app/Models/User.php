@@ -7,12 +7,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
-
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    protected $table = 'users';
+    
+    /**
+     * Get the login locations for the user.
+     */
+    public function loginLocations()
+    {
+        return $this->hasMany(LoginLocation::class);
+    }
     /**
      * The attributes that are mass assignable.
      *

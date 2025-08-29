@@ -9,30 +9,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 /**
- * @OA\Info(
- *     title="API de Usuarios",
- *     version="1.0.0",
- *     description="API para gestión de usuarios del sistema RRHH",
- *     @OA\Contact(
- *         email="admin@example.com",
- *         name="Administrador del Sistema"
- *     ),
- *     @OA\License(
- *         name="MIT",
- *         url="https://opensource.org/licenses/MIT"
- *     )
- * )
- * 
- * @OA\Server(
- *     description="Servidor Local",
- *     url=L5_SWAGGER_CONST_HOST
- * )
- * 
- * @OA\SecurityScheme(
- *     securityScheme="bearerAuth",
- *     type="http",
- *     scheme="bearer",
- *     bearerFormat="JWT"
+ * @OA\Tag(
+ *     name="Usuarios",
+ *     description="API para gestión de usuarios"
  * )
  */
 class UserController extends Controller
@@ -87,40 +66,40 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create a new employee in the system.
      * 
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      * 
      * @OA\Post(
-     *     path="/api/users",
-     *     operationId="storeUser",
+     *     path="/api/users/create-employee",
+     *     operationId="createEmployee",
      *     tags={"Usuarios"},
-     *     summary="Crear un nuevo usuario",
-     *     description="Crea un nuevo usuario en el sistema",
+     *     summary="Crear nuevo empleado",
+     *     description="Crea un nuevo empleado en el sistema RRHH",
      *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
      *             required={"name", "email", "password"},
-     *             @OA\Property(property="name", type="string", example="John Doe", description="Nombre completo del usuario"),
-     *             @OA\Property(property="email", type="string", format="email", example="john@example.com", description="Correo electrónico (único)"),
-     *             @OA\Property(property="password", type="string", format="password", example="password123", description="Contraseña (mínimo 8 caracteres)")
+     *             @OA\Property(property="name", type="string", example="Juan Pérez García", description="Nombre completo del empleado"),
+     *             @OA\Property(property="email", type="string", format="email", example="juan.perez@empresa.com", description="Correo electrónico corporativo (único)"),
+     *             @OA\Property(property="password", type="string", format="password", example="empleado123", description="Contraseña temporal (mínimo 8 caracteres)")
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Usuario creado exitosamente",
+     *         description="Empleado creado exitosamente",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Usuario creado exitosamente"),
+     *             @OA\Property(property="message", type="string", example="Empleado creado exitosamente"),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="John Doe"),
-     *                 @OA\Property(property="email", type="string", format="email", example="john@example.com"),
+     *                 @OA\Property(property="name", type="string", example="Juan Pérez García"),
+     *                 @OA\Property(property="email", type="string", format="email", example="juan.perez@empresa.com"),
      *                 @OA\Property(property="created_at", type="string", format="date-time", example="2025-08-21T20:00:00.000000Z"),
      *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2025-08-21T20:00:00.000000Z")
      *             )
@@ -136,26 +115,37 @@ class UserController extends Controller
      *             @OA\Property(
      *                 property="errors",
      *                 type="object",
-     *                 @OA\Property(property="email", type="array", @OA\Items(type="string", example="El correo ya está en uso"))
+     *                 @OA\Property(
+     *                     property="email",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="El correo ya está en uso.")
+     *                 )
      *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=401,
      *         description="No autorizado"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor"
      *     )
      * )
      */
-    public function store(Request $request)
+    public function createEmployee(Request $request)
     {
         try {
             $request->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/',
                 'email' => 'required|string|email|max:255|unique:users',
-                'password' => 'required|string|min:8',
+                'password' => 'required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+            ], [
+                'name.regex' => 'El nombre solo puede contener letras y espacios.',
+                'password.regex' => 'La contraseña debe contener al menos una mayúscula, una minúscula y un número.',
             ]);
 
-            $user = User::create([
+            $employee = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
@@ -163,9 +153,10 @@ class UserController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Usuario creado exitosamente',
-                'data' => $user
+                'message' => 'Empleado creado exitosamente',
+                'data' => $employee
             ], 201);
+
         } catch (ValidationException $e) {
             return response()->json([
                 'status' => false,
@@ -175,7 +166,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Error al crear el usuario',
+                'message' => 'Error al crear el empleado',
                 'error' => $e->getMessage()
             ], 500);
         }

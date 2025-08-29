@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\LoginLocation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -48,16 +49,11 @@ class AuthController extends Controller
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(
-     *                     property="user",
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="John Doe"),
-     *                     @OA\Property(property="email", type="string", format="email", example="usuario@ejemplo.com"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2025-08-21T20:00:00.000000Z"),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-08-21T20:00:00.000000Z")
-     *                 ),
-     *                 @OA\Property(property="token", type="string", example="1|abcdefghijklmnopqrstuvwxyz")
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="John Doe"),
+     *                 @OA\Property(property="email", type="string", format="email", example="usuario@ejemplo.com"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2025-08-21T20:00:00.000000Z"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2025-08-21T20:00:00.000000Z")
      *             )
      *         )
      *     ),
@@ -96,15 +92,10 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
-            $token = $user->createToken('auth-token')->plainTextToken;
-
             return response()->json([
                 'status' => true,
                 'message' => 'Usuario registrado exitosamente',
-                'data' => [
-                    'user' => $user,
-                    'token' => $token
-                ]
+                'data' => $user
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
@@ -138,7 +129,9 @@ class AuthController extends Controller
      *         @OA\JsonContent(
      *             required={"email", "password"},
      *             @OA\Property(property="email", type="string", format="email", example="usuario@ejemplo.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="contraseña")
+     *             @OA\Property(property="password", type="string", format="password", example="contraseña"),
+     *             @OA\Property(property="latitude", type="number", format="float", example="19.4326077"),
+     *             @OA\Property(property="longitude", type="number", format="float", example="-99.1333827")
      *         )
      *     ),
      *     @OA\Response(
@@ -190,6 +183,8 @@ class AuthController extends Controller
             $request->validate([
                 'email' => 'required|email',
                 'password' => 'required',
+                'latitude' => 'nullable|numeric',
+                'longitude' => 'nullable|numeric',
             ]);
 
             $user = User::where('email', $request->email)->first();
@@ -199,15 +194,49 @@ class AuthController extends Controller
                     'email' => ['Las credenciales proporcionadas son incorrectas.'],
                 ]);
             }
+            
+            // Store login location data if provided
+            $tokenData = ['auth-token'];
+            if ($request->has('latitude') && $request->has('longitude')) {
+                $tokenData = [
+                    'auth-token',
+                    'latitude' => $request->latitude,
+                    'longitude' => $request->longitude
+                ];
+                
+                // Save login location to database
+                $user->loginLocations()->create([
+                    'latitude' => $request->latitude,
+                    'longitude' => $request->longitude,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                    'login_at' => now()
+                ]);
+            }
 
-            $token = $user->createToken('auth-token')->plainTextToken;
+            $token = $user->createToken('auth-token', $tokenData)->plainTextToken;
+            
+            // Obtener roles y permisos del usuario
+            $roles = $user->getRoleNames();
+            $permissions = $user->getAllPermissions()->pluck('name');
 
+            $locationData = [];
+            if ($request->has('latitude') && $request->has('longitude')) {
+                $locationData = [
+                    'latitude' => $request->latitude,
+                    'longitude' => $request->longitude
+                ];
+            }
+            
             return response()->json([
                 'status' => true,
                 'message' => 'Inicio de sesión exitoso',
                 'data' => [
                     'user' => $user,
-                    'token' => $token
+                    'roles' => $roles,
+                    'permissions' => $permissions,
+                    'token' => $token,
+                    'location' => $locationData
                 ]
             ]);
         } catch (ValidationException $e) {
@@ -311,10 +340,20 @@ class AuthController extends Controller
     public function profile(Request $request)
     {
         try {
+            $user = $request->user();
+            
+            // Obtener roles y permisos del usuario
+            $roles = $user->getRoleNames();
+            $permissions = $user->getAllPermissions()->pluck('name');
+            
             return response()->json([
                 'status' => true,
                 'message' => 'Perfil de usuario obtenido exitosamente',
-                'data' => $request->user()
+                'data' => [
+                    'user' => $user,
+                    'roles' => $roles,
+                    'permissions' => $permissions
+                ]
             ]);
         } catch (\Exception $e) {
             return response()->json([

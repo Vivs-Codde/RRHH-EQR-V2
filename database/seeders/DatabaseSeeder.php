@@ -19,5 +19,13 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+        
+        // Ejecutar el seeder de roles y permisos
+        if (class_exists(RoleAndPermissionSeeder::class)) {
+            $this->call(RoleAndPermissionSeeder::class);
+        }
+        
+        // Ejecutar nuestro nuevo seeder de permisos con guard sanctum
+        $this->call(PermissionSeeder::class);
     }
 }
