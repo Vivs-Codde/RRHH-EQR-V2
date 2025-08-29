@@ -30,12 +30,6 @@ class DatabaseSeeder extends Seeder
         
         // Ejecutar el seeder de roles y permisos
         $this->call(RoleAndPermissionSeeder::class);
-        if (class_exists(RoleAndPermissionSeeder::class)) {
-            $this->call(RoleAndPermissionSeeder::class);
-        }
-        
-        // Ejecutar nuestro nuevo seeder de permisos con guard sanctum
-        $this->call(PermissionSeeder::class);
         
         // Ejecutar seeders para los modelos de la aplicación
         $this->call([

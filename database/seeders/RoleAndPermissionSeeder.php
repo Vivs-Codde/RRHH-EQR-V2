@@ -17,71 +17,77 @@ class RoleAndPermissionSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Crear permisos para usuarios
-        Permission::create(['name' => 'crear usuarios']);
-        Permission::create(['name' => 'ver usuarios']);
-        Permission::create(['name' => 'editar usuarios']);
-        Permission::create(['name' => 'eliminar usuarios']);
+        // Crear permisos para usuarios con guardia sanctum explícita
+        Permission::create(['name' => 'crear usuarios', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'ver usuarios', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'editar usuarios', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'eliminar usuarios', 'guard_name' => 'sanctum']);
         
-        // Crear permisos para empleados
-        Permission::create(['name' => 'crear empleados']);
-        Permission::create(['name' => 'ver empleados']);
-        Permission::create(['name' => 'editar empleados']);
-        Permission::create(['name' => 'eliminar empleados']);
+        // Crear permisos para empleados con guardia sanctum explícita
+        Permission::create(['name' => 'crear empleados', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'ver empleados', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'editar empleados', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'eliminar empleados', 'guard_name' => 'sanctum']);
         
-        // Crear permisos para departamentos
-        Permission::create(['name' => 'crear departamentos']);
-        Permission::create(['name' => 'ver departamentos']);
-        Permission::create(['name' => 'editar departamentos']);
-        Permission::create(['name' => 'eliminar departamentos']);
+        // Crear permisos para departamentos con guardia sanctum explícita
+        Permission::create(['name' => 'crear departamentos', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'ver departamentos', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'editar departamentos', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'eliminar departamentos', 'guard_name' => 'sanctum']);
         
-        // Crear permisos para estructuras organizacionales
-        Permission::create(['name' => 'crear estructuras']);
-        Permission::create(['name' => 'ver estructuras']);
-        Permission::create(['name' => 'editar estructuras']);
-        Permission::create(['name' => 'eliminar estructuras']);
+        // Crear permisos para estructuras organizacionales con guardia sanctum explícita
+        Permission::create(['name' => 'crear estructuras', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'ver estructuras', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'editar estructuras', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'eliminar estructuras', 'guard_name' => 'sanctum']);
         
-        // Crear permisos para fincas
-        Permission::create(['name' => 'crear fincas']);
-        Permission::create(['name' => 'ver fincas']);
-        Permission::create(['name' => 'editar fincas']);
-        Permission::create(['name' => 'eliminar fincas']);
+        // Crear permisos para fincas con guardia sanctum explícita
+        Permission::create(['name' => 'crear fincas', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'ver fincas', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'editar fincas', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'eliminar fincas', 'guard_name' => 'sanctum']);
 
-        // Crear permisos para colores
-        Permission::create(['name' => 'crear colores']);
-        Permission::create(['name' => 'ver colores']);
-        Permission::create(['name' => 'editar colores']);
-        Permission::create(['name' => 'eliminar colores']);
+        // Crear permisos para colores con guardia sanctum explícita
+        Permission::create(['name' => 'crear colores', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'ver colores', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'editar colores', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'eliminar colores', 'guard_name' => 'sanctum']);
 
-        // Crear permisos para tipos de contrato
-        Permission::create(['name' => 'crear tipos-contrato']);
-        Permission::create(['name' => 'ver tipos-contrato']);
-        Permission::create(['name' => 'editar tipos-contrato']);
-        Permission::create(['name' => 'eliminar tipos-contrato']);
+        // Crear permisos para tipos de contrato con guardia sanctum explícita
+        Permission::create(['name' => 'crear tipos-contrato', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'ver tipos-contrato', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'editar tipos-contrato', 'guard_name' => 'sanctum']);
+        Permission::create(['name' => 'eliminar tipos-contrato', 'guard_name' => 'sanctum']);
 
-        // Crear roles y asignar permisos
-        $roleAdmin = Role::create(['name' => 'admin']);
-        $roleAdmin->givePermissionTo(Permission::all());
+        // Crear roles y asignar permisos con guardia sanctum explícita
+        $roleAdmin = Role::create(['name' => 'admin', 'guard_name' => 'sanctum']);
+        $roleAdmin->givePermissionTo(Permission::where('guard_name', 'sanctum')->get());
         
-        $roleRRHH = Role::create(['name' => 'rrhh']);
-        $roleRRHH->givePermissionTo([
-            'ver usuarios', 'crear empleados', 'ver empleados', 'editar empleados',
-            'ver departamentos', 'ver estructuras', 'ver fincas', 'ver tipos-contrato',
-            'ver colores'
-        ]);
+        $roleRRHH = Role::create(['name' => 'rrhh', 'guard_name' => 'sanctum']);
+        $permissionsRRHH = Permission::where('guard_name', 'sanctum')
+            ->whereIn('name', [
+                'ver usuarios', 'crear empleados', 'ver empleados', 'editar empleados',
+                'ver departamentos', 'ver estructuras', 'ver fincas', 'ver tipos-contrato',
+                'ver colores'
+            ])->get();
+        $roleRRHH->givePermissionTo($permissionsRRHH);
         
-        $roleGerente = Role::create(['name' => 'gerente']);
-        $roleGerente->givePermissionTo([
-            'ver empleados', 'ver departamentos', 'ver estructuras', 
-            'ver fincas', 'ver tipos-contrato'
-        ]);
+        $roleGerente = Role::create(['name' => 'gerente', 'guard_name' => 'sanctum']);
+        $permissionsGerente = Permission::where('guard_name', 'sanctum')
+            ->whereIn('name', [
+                'ver empleados', 'ver departamentos', 'ver estructuras', 
+                'ver fincas', 'ver tipos-contrato'
+            ])->get();
+        $roleGerente->givePermissionTo($permissionsGerente);
         
-        $roleVisor = Role::create(['name' => 'visor']);
-        $roleVisor->givePermissionTo([
-            'ver empleados', 'ver departamentos', 'ver estructuras'
-        ]);
+        $roleVisor = Role::create(['name' => 'visor', 'guard_name' => 'sanctum']);
+        $permissionsVisor = Permission::where('guard_name', 'sanctum')
+            ->whereIn('name', [
+                'ver empleados', 'ver departamentos', 'ver estructuras'
+            ])->get();
+        $roleVisor->givePermissionTo($permissionsVisor);
 
-        // Crear un usuario admin y asignarle el rol
+        // Crear un usuario admin y asignarle el rol con guardia sanctum
         $admin = User::where('email', 'admin@example.com')->first();
         if (!$admin) {
             $admin = User::create([
@@ -90,6 +96,8 @@ class RoleAndPermissionSeeder extends Seeder
                 'password' => bcrypt('password')
             ]);
         }
-        $admin->assignRole('admin');
+        
+        // Asignar rol usando el ID en lugar del objeto
+        $admin->assignRole($roleAdmin->id);
     }
 }

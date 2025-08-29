@@ -14,6 +14,7 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
     protected $table = 'users';
+    protected $guard_name = 'sanctum';
     
     /**
      * Get the login locations for the user.
