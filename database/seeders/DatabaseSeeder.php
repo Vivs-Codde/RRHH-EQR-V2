@@ -5,6 +5,14 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\ColorSeeder;
+use Database\Seeders\DepartamentoSeeder;
+use Database\Seeders\FincaSeeder;
+use Database\Seeders\TipoContratoSeeder;
+use Database\Seeders\EstructuraOrganizacionalSeeder;
+use Database\Seeders\EmpleadoSeeder;
+use Database\Seeders\LoginLocationSeeder;
+use Database\Seeders\RoleAndPermissionSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,11 +29,23 @@ class DatabaseSeeder extends Seeder
         ]);
         
         // Ejecutar el seeder de roles y permisos
+        $this->call(RoleAndPermissionSeeder::class);
         if (class_exists(RoleAndPermissionSeeder::class)) {
             $this->call(RoleAndPermissionSeeder::class);
         }
         
         // Ejecutar nuestro nuevo seeder de permisos con guard sanctum
         $this->call(PermissionSeeder::class);
+        
+        // Ejecutar seeders para los modelos de la aplicación
+        $this->call([
+            ColorSeeder::class,
+            DepartamentoSeeder::class,
+            FincaSeeder::class,
+            TipoContratoSeeder::class,
+            EstructuraOrganizacionalSeeder::class,
+            EmpleadoSeeder::class,
+            LoginLocationSeeder::class,
+        ]);
     }
 }

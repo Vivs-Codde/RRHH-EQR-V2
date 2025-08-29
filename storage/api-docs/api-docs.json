@@ -2976,22 +2976,18 @@
                     "Roles y Permisos"
                 ],
                 "summary": "Listar todos los roles",
-                "description": "Listar todos los roles",
-                "operationId": "listRoles",
+                "description": "Obtiene un listado de todos los roles disponibles en el sistema",
+                "operationId": "5cb4610d31c047bcde6803c851462568",
                 "responses": {
                     "200": {
-                        "description": "Operación exitosa",
+                        "description": "Lista de roles obtenida exitosamente",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Roles obtenidos exitosamente"
                                         },
                                         "data": {
                                             "type": "array",
@@ -3009,11 +3005,34 @@
                                                         "type": "string",
                                                         "example": "web"
                                                     },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-08-21T20:00:00.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-08-21T20:00:00.000000Z"
+                                                    },
                                                     "permissions": {
                                                         "type": "array",
                                                         "items": {
-                                                            "type": "string",
-                                                            "example": "crear usuarios"
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "example": "crear usuarios"
+                                                                },
+                                                                "guard_name": {
+                                                                    "type": "string",
+                                                                    "example": "web"
+                                                                }
+                                                            },
+                                                            "type": "object"
                                                         }
                                                     }
                                                 },
@@ -3041,27 +3060,28 @@
                     "Roles y Permisos"
                 ],
                 "summary": "Crear un nuevo rol",
-                "description": "Crear un nuevo rol",
-                "operationId": "createRole",
+                "description": "Crea un nuevo rol en el sistema con permisos asociados",
+                "operationId": "176c913fb5f8df1e4b5cabc5f0a0a1ee",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "name",
-                                    "permissions"
+                                    "name"
                                 ],
                                 "properties": {
                                     "name": {
+                                        "description": "Nombre único del rol",
                                         "type": "string",
                                         "example": "supervisor"
                                     },
                                     "permissions": {
+                                        "description": "Lista de IDs de permisos a asignar",
                                         "type": "array",
                                         "items": {
-                                            "type": "string",
-                                            "example": "ver empleados"
+                                            "type": "integer",
+                                            "example": 1
                                         }
                                     }
                                 },
@@ -3077,7 +3097,7 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": true
                                         },
@@ -3089,7 +3109,7 @@
                                             "properties": {
                                                 "id": {
                                                     "type": "integer",
-                                                    "example": 5
+                                                    "example": 2
                                                 },
                                                 "name": {
                                                     "type": "string",
@@ -3099,12 +3119,15 @@
                                                     "type": "string",
                                                     "example": "web"
                                                 },
-                                                "permissions": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "ver empleados"
-                                                    }
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-08-29T20:00:00.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-08-29T20:00:00.000000Z"
                                                 }
                                             },
                                             "type": "object"
@@ -3116,10 +3139,36 @@
                         }
                     },
                     "422": {
-                        "description": "Error de validación"
-                    },
-                    "401": {
-                        "description": "No autorizado"
+                        "description": "Error de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error de validación"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El nombre del rol ya existe."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -3134,13 +3183,14 @@
                 "tags": [
                     "Roles y Permisos"
                 ],
-                "summary": "Actualizar un rol",
-                "description": "Actualizar un rol",
-                "operationId": "updateRole",
+                "summary": "Actualizar un rol existente",
+                "description": "Actualiza la información y los permisos de un rol existente",
+                "operationId": "e90e104e14913fa84edfae0fea141258",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID del rol a actualizar",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -3154,14 +3204,16 @@
                             "schema": {
                                 "properties": {
                                     "name": {
+                                        "description": "Nuevo nombre del rol",
                                         "type": "string",
                                         "example": "supervisor_actualizado"
                                     },
                                     "permissions": {
+                                        "description": "Nueva lista de IDs de permisos",
                                         "type": "array",
                                         "items": {
-                                            "type": "string",
-                                            "example": "ver empleados"
+                                            "type": "integer",
+                                            "example": 1
                                         }
                                     }
                                 },
@@ -3177,7 +3229,7 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": true
                                         },
@@ -3189,7 +3241,7 @@
                                             "properties": {
                                                 "id": {
                                                     "type": "integer",
-                                                    "example": 5
+                                                    "example": 2
                                                 },
                                                 "name": {
                                                     "type": "string",
@@ -3199,12 +3251,10 @@
                                                     "type": "string",
                                                     "example": "web"
                                                 },
-                                                "permissions": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "ver empleados"
-                                                    }
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-08-29T21:00:00.000000Z"
                                                 }
                                             },
                                             "type": "object"
@@ -3216,13 +3266,24 @@
                         }
                     },
                     "404": {
-                        "description": "Rol no encontrado"
-                    },
-                    "422": {
-                        "description": "Error de validación"
-                    },
-                    "401": {
-                        "description": "No autorizado"
+                        "description": "Rol no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Rol no encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -3236,12 +3297,13 @@
                     "Roles y Permisos"
                 ],
                 "summary": "Eliminar un rol",
-                "description": "Eliminar un rol",
-                "operationId": "deleteRole",
+                "description": "Elimina un rol existente del sistema",
+                "operationId": "be48685fa9ff92e4ebc09401c65b5644",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID del rol a eliminar",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -3255,7 +3317,7 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": true
                                         },
@@ -3272,11 +3334,25 @@
                     "404": {
                         "description": "Rol no encontrado"
                     },
-                    "401": {
-                        "description": "No autorizado"
-                    },
-                    "403": {
-                        "description": "No se puede eliminar rol con usuarios asignados"
+                    "409": {
+                        "description": "Conflicto al eliminar rol",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No se puede eliminar el rol porque está en uso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -3292,22 +3368,18 @@
                     "Roles y Permisos"
                 ],
                 "summary": "Listar todos los permisos",
-                "description": "Listar todos los permisos",
-                "operationId": "listPermissions",
+                "description": "Obtiene un listado de todos los permisos disponibles en el sistema",
+                "operationId": "fe1fb6fb5a23141ce2a7e1f91eab6821",
                 "responses": {
                     "200": {
-                        "description": "Operación exitosa",
+                        "description": "Lista de permisos obtenida exitosamente",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Permisos obtenidos exitosamente"
                                         },
                                         "data": {
                                             "type": "array",
@@ -3324,6 +3396,16 @@
                                                     "guard_name": {
                                                         "type": "string",
                                                         "example": "web"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-08-21T20:00:00.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-08-21T20:00:00.000000Z"
                                                     }
                                                 },
                                                 "type": "object"
@@ -3344,6 +3426,120 @@
                         "bearerAuth": []
                     }
                 ]
+            },
+            "post": {
+                "tags": [
+                    "Roles y Permisos"
+                ],
+                "summary": "Crear un nuevo permiso",
+                "description": "Crea un nuevo permiso en el sistema",
+                "operationId": "67f024ab6cb99ed2c1cc014a70cdb3d8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Nombre único del permiso",
+                                        "type": "string",
+                                        "example": "editar usuarios"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Permiso creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Permiso creado exitosamente"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "editar usuarios"
+                                                },
+                                                "guard_name": {
+                                                    "type": "string",
+                                                    "example": "web"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-08-29T20:00:00.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-08-29T20:00:00.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error de validación"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El nombre del permiso ya existe."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/assign-role": {
@@ -3351,9 +3547,9 @@
                 "tags": [
                     "Roles y Permisos"
                 ],
-                "summary": "Asignar rol a un usuario",
-                "description": "Asignar rol a un usuario",
-                "operationId": "assignRole",
+                "summary": "Asignar roles a un usuario",
+                "description": "Asigna uno o varios roles a un usuario específico",
+                "operationId": "8e1436cb498094793d582e7003db9dc6",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3365,14 +3561,16 @@
                                 ],
                                 "properties": {
                                     "user_id": {
+                                        "description": "ID del usuario",
                                         "type": "integer",
                                         "example": 1
                                     },
                                     "roles": {
+                                        "description": "Lista de IDs de roles a asignar",
                                         "type": "array",
                                         "items": {
-                                            "type": "string",
-                                            "example": "admin"
+                                            "type": "integer",
+                                            "example": 1
                                         }
                                     }
                                 },
@@ -3383,22 +3581,32 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Rol asignado exitosamente",
+                        "description": "Roles asignados exitosamente",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Rol asignado exitosamente"
+                                            "example": "Roles asignados exitosamente"
                                         },
                                         "data": {
                                             "properties": {
                                                 "user": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "John Doe"
+                                                        }
+                                                    },
                                                     "type": "object"
                                                 },
                                                 "roles": {
@@ -3418,13 +3626,27 @@
                         }
                     },
                     "404": {
-                        "description": "Usuario no encontrado"
+                        "description": "Usuario no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuario no encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "422": {
                         "description": "Error de validación"
-                    },
-                    "401": {
-                        "description": "No autorizado"
                     }
                 },
                 "security": [
@@ -3439,50 +3661,99 @@
                 "tags": [
                     "Roles y Permisos"
                 ],
-                "summary": "Obtener usuarios con sus roles",
-                "description": "Obtener usuarios con sus roles",
-                "operationId": "getUsersWithRoles",
+                "summary": "Listar usuarios con sus roles",
+                "description": "Obtiene un listado de todos los usuarios con sus roles asignados",
+                "operationId": "c7f033ea22c4da310eb29362c7dffcaa",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número de página para paginación",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 15
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Operación exitosa",
+                        "description": "Lista de usuarios con roles obtenida exitosamente",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": true
                                         },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Usuarios con roles obtenidos exitosamente"
-                                        },
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "name": {
-                                                        "type": "string",
-                                                        "example": "John Doe"
-                                                    },
-                                                    "email": {
-                                                        "type": "string",
-                                                        "example": "john@example.com"
-                                                    },
-                                                    "roles": {
-                                                        "type": "array",
-                                                        "items": {
-                                                            "type": "string",
-                                                            "example": "admin"
-                                                        }
-                                                    }
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
                                                 },
-                                                "type": "object"
-                                            }
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 35
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "format": "email",
+                                                                "example": "john@example.com"
+                                                            },
+                                                            "roles": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "admin"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -4337,6 +4608,88 @@
     },
     "components": {
         "schemas": {
+            "Role": {
+                "title": "Role",
+                "description": "Modelo de rol para el sistema",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/RolePermissions"
+                    },
+                    {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "admin"
+                            },
+                            "guard_name": {
+                                "type": "string",
+                                "example": "web"
+                            },
+                            "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2025-08-21T12:00:00.000000Z"
+                            },
+                            "updated_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2025-08-21T12:00:00.000000Z"
+                            },
+                            "permissions": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Permission"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "Permission": {
+                "title": "Permission",
+                "description": "Modelo de permiso para el sistema",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/RolePermissions"
+                    },
+                    {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "crear usuarios"
+                            },
+                            "guard_name": {
+                                "type": "string",
+                                "example": "web"
+                            },
+                            "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2025-08-21T12:00:00.000000Z"
+                            },
+                            "updated_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2025-08-21T12:00:00.000000Z"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
             "RolePermissions": {
                 "properties": {
                     "roles": {
@@ -4730,7 +5083,7 @@
         },
         {
             "name": "Roles y Permisos",
-            "description": "API para administrar roles y permisos"
+            "description": "API para gestión de roles y permisos"
         },
         {
             "name": "Tipos de Contrato",
