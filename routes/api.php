@@ -52,19 +52,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users-with-roles', [RolePermissionController::class, 'getUsersWithRoles']);
     
     // Rutas para colores
-    Route::middleware(['permission:ver colores'])->get('colores', [ColorController::class, 'index']);
-    Route::middleware(['permission:ver colores'])->get('colores/{id}', [ColorController::class, 'show']);
-    Route::middleware(['permission:crear colores'])->post('colores', [ColorController::class, 'store']);
-    Route::middleware(['permission:editar colores'])->put('colores/{id}', [ColorController::class, 'update']);
-    Route::middleware(['permission:eliminar colores'])->delete('colores/{id}', [ColorController::class, 'destroy']);
+    Route::get('colores', [ColorController::class, 'index']);
+    Route::get('colores/{id}', [ColorController::class, 'show']);
+    Route::post('colores', [ColorController::class, 'store']);
+    Route::put('colores/{id}', [ColorController::class, 'update']);
+    Route::delete('colores/{id}', [ColorController::class, 'destroy']);
     
     // Rutas para estructuras organizacionales
-    Route::middleware(['permission:ver estructuras'])->get('estructuras-organizacionales', [EstructuraOrganizacionalController::class, 'index']);
-    Route::middleware(['permission:ver estructuras'])->get('estructuras-organizacionales/{id}', [EstructuraOrganizacionalController::class, 'show']);
-    Route::middleware(['permission:crear estructuras'])->post('estructuras-organizacionales', [EstructuraOrganizacionalController::class, 'store']);
-    Route::middleware(['permission:editar estructuras'])->put('estructuras-organizacionales/{id}', [EstructuraOrganizacionalController::class, 'update']);
-    Route::middleware(['permission:eliminar estructuras'])->delete('estructuras-organizacionales/{id}', [EstructuraOrganizacionalController::class, 'destroy']);
-    Route::middleware(['permission:editar estructuras'])->post('estructuras-organizacionales/{id}/colores', [EstructuraOrganizacionalController::class, 'asociarColores']);
+    Route::get('estructuras-organizacionales', [EstructuraOrganizacionalController::class, 'index']);
+    Route::get('estructuras-organizacionales/{id}', [EstructuraOrganizacionalController::class, 'show']);
+    Route::post('estructuras-organizacionales', [EstructuraOrganizacionalController::class, 'store']);
+    Route::put('estructuras-organizacionales/{id}', [EstructuraOrganizacionalController::class, 'update']);
+    Route::delete('estructuras-organizacionales/{id}', [EstructuraOrganizacionalController::class, 'destroy']);
+    Route::post('estructuras-organizacionales/{id}/colores', [EstructuraOrganizacionalController::class, 'asociarColores']);
     
     // Rutas para empleados - quitamos el middleware temporalmente para diagnosticar
     Route::get('empleados', [EmpleadoController::class, 'index']);
@@ -75,23 +75,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('empleados/{id}/fincas', [EmpleadoController::class, 'asociarFincas']);
     
     // Rutas para tipos de contrato
-    Route::middleware(['permission:ver tipos-contrato'])->get('tipos-contrato', [TipoContratoController::class, 'index']);
-    Route::middleware(['permission:ver tipos-contrato'])->get('tipos-contrato/{id}', [TipoContratoController::class, 'show']);
-    Route::middleware(['permission:crear tipos-contrato'])->post('tipos-contrato', [TipoContratoController::class, 'store']);
-    Route::middleware(['permission:editar tipos-contrato'])->put('tipos-contrato/{id}', [TipoContratoController::class, 'update']);
-    Route::middleware(['permission:eliminar tipos-contrato'])->delete('tipos-contrato/{id}', [TipoContratoController::class, 'destroy']);
+    Route::get('tipos-contrato', [TipoContratoController::class, 'index']);
+    Route::get('tipos-contrato/{id}', [TipoContratoController::class, 'show']);
+    Route::post('tipos-contrato', [TipoContratoController::class, 'store']);
+    Route::put('tipos-contrato/{id}', [TipoContratoController::class, 'update']);
+    Route::delete('tipos-contrato/{id}', [TipoContratoController::class, 'destroy']);
     
     // Rutas para fincas
-    Route::middleware(['permission:ver fincas'])->get('fincas', [FincaController::class, 'index']);
-    Route::middleware(['permission:ver fincas'])->get('fincas/{id}', [FincaController::class, 'show']);
-    Route::middleware(['permission:crear fincas'])->post('fincas', [FincaController::class, 'store']);
-    Route::middleware(['permission:editar fincas'])->put('fincas/{id}', [FincaController::class, 'update']);
-    Route::middleware(['permission:eliminar fincas'])->delete('fincas/{id}', [FincaController::class, 'destroy']);
+    Route::get('fincas', [FincaController::class, 'index']);
+    Route::get('fincas/{id}', [FincaController::class, 'show']);
+    Route::post('fincas', [FincaController::class, 'store']);
+    Route::put('fincas/{id}', [FincaController::class, 'update']);
+    Route::delete('fincas/{id}', [FincaController::class, 'destroy']);
     
     // Rutas para departamentos
-    Route::middleware(['permission:ver departamentos'])->get('departamentos', [DepartamentoController::class, 'index']);
-    Route::middleware(['permission:ver departamentos'])->get('departamentos/{id}', [DepartamentoController::class, 'show']);
-    Route::middleware(['permission:crear departamentos'])->post('departamentos', [DepartamentoController::class, 'store']);
-    Route::middleware(['permission:editar departamentos'])->put('departamentos/{id}', [DepartamentoController::class, 'update']);
-    Route::middleware(['permission:eliminar departamentos'])->delete('departamentos/{id}', [DepartamentoController::class, 'destroy']);
+    Route::get('departamentos', [DepartamentoController::class, 'index']);
+    Route::get('departamentos/{id}', [DepartamentoController::class, 'show']);
+    Route::post('departamentos', [DepartamentoController::class, 'store']);
+    Route::put('departamentos/{id}', [DepartamentoController::class, 'update']);
+    Route::delete('departamentos/{id}', [DepartamentoController::class, 'destroy']);
 });
