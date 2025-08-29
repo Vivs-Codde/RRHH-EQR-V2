@@ -97,6 +97,16 @@ return [
     ],
 
     /*
+     * Definimos sanctum como el guard predeterminado para los permisos
+     */
+    'defaults' => [
+        'guard' => 'sanctum',
+        'permissions' => [
+            'names' => true, // Usando nombres en lugar de IDs para los permisos
+        ],
+    ],
+
+    /*
      * When set to true, the method for checking permissions will be registered on the gate.
      * Set this to false, if you want to implement custom logic for checking permissions.
      */

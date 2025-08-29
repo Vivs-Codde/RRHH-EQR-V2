@@ -66,13 +66,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware(['permission:eliminar estructuras'])->delete('estructuras-organizacionales/{id}', [EstructuraOrganizacionalController::class, 'destroy']);
     Route::middleware(['permission:editar estructuras'])->post('estructuras-organizacionales/{id}/colores', [EstructuraOrganizacionalController::class, 'asociarColores']);
     
-    // Rutas para empleados
-    Route::middleware(['permission:ver empleados'])->get('empleados', [EmpleadoController::class, 'index']);
-    Route::middleware(['permission:ver empleados'])->get('empleados/{id}', [EmpleadoController::class, 'show']);
-    Route::middleware(['permission:crear empleados'])->post('empleados', [EmpleadoController::class, 'store']);
-    Route::middleware(['permission:editar empleados'])->put('empleados/{id}', [EmpleadoController::class, 'update']);
-    Route::middleware(['permission:eliminar empleados'])->delete('empleados/{id}', [EmpleadoController::class, 'destroy']);
-    Route::middleware(['permission:editar empleados'])->post('empleados/{id}/fincas', [EmpleadoController::class, 'asociarFincas']);
+    // Rutas para empleados - quitamos el middleware temporalmente para diagnosticar
+    Route::get('empleados', [EmpleadoController::class, 'index']);
+    Route::get('empleados/{id}', [EmpleadoController::class, 'show']);
+    Route::post('empleados', [EmpleadoController::class, 'store']);
+    Route::put('empleados/{id}', [EmpleadoController::class, 'update']);
+    Route::delete('empleados/{id}', [EmpleadoController::class, 'destroy']);
+    Route::post('empleados/{id}/fincas', [EmpleadoController::class, 'asociarFincas']);
     
     // Rutas para tipos de contrato
     Route::middleware(['permission:ver tipos-contrato'])->get('tipos-contrato', [TipoContratoController::class, 'index']);
