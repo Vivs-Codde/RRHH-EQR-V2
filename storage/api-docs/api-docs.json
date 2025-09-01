@@ -891,7 +891,8 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "nombre"
+                                    "nombre",
+                                    "color_id"
                                 ],
                                 "properties": {
                                     "nombre": {
@@ -899,10 +900,10 @@
                                         "type": "string",
                                         "example": "Recursos Humanos"
                                     },
-                                    "color": {
-                                        "description": "Color hexadecimal del departamento",
-                                        "type": "string",
-                                        "example": "#FF5733"
+                                    "color_id": {
+                                        "description": "ID del color asignado al departamento",
+                                        "type": "integer",
+                                        "example": 1
                                     },
                                     "estado": {
                                         "description": "Estado del departamento (activo/inactivo)",
@@ -2057,8 +2058,8 @@
                                         "type": "boolean",
                                         "example": true
                                     },
-                                    "colores": {
-                                        "description": "Array de IDs de colores a asociar (opcional)",
+                                    "departamentos_acceso": {
+                                        "description": "Array de IDs de departamentos a los que tiene acceso el cargo",
                                         "type": "array",
                                         "items": {
                                             "type": "integer"
@@ -2405,14 +2406,14 @@
                 ]
             }
         },
-        "/api/estructuras-organizacionales/{id}/colores": {
+        "/api/estructuras-organizacionales/{id}/departamentos-acceso": {
             "post": {
                 "tags": [
                     "Estructuras Organizacionales"
                 ],
-                "summary": "Asociar colores a una estructura organizacional",
-                "description": "Asocia uno o más colores a una estructura organizacional específica",
-                "operationId": "0bed467d311793ef8f489c04371b9cac",
+                "summary": "Asignar departamentos de acceso a una estructura organizacional",
+                "description": "Asigna múltiples departamentos de acceso a una estructura organizacional específica",
+                "operationId": "daa6b2b29aead4368adfe52390d54372",
                 "parameters": [
                     {
                         "name": "id",
@@ -2430,11 +2431,11 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "colores"
+                                    "departamentos"
                                 ],
                                 "properties": {
-                                    "colores": {
-                                        "description": "Array de IDs de colores a asociar",
+                                    "departamentos": {
+                                        "description": "Array de IDs de departamentos de acceso",
                                         "type": "array",
                                         "items": {
                                             "type": "integer"
@@ -2453,7 +2454,75 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Colores asociados exitosamente"
+                        "description": "Departamentos de acceso asignados exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/estructuras-organizacionales/{id}/colores-carnet": {
+            "get": {
+                "tags": [
+                    "Estructuras Organizacionales"
+                ],
+                "summary": "Obtener colores para carnet de una estructura organizacional",
+                "description": "Obtiene los colores de los departamentos a los que tiene acceso el cargo (para impresión de carnets)",
+                "operationId": "e6326f4b1eb942b205046bd526c0fadd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la estructura organizacional",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Colores para carnet obtenidos exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "cargo": {
+                                                    "type": "string",
+                                                    "example": "Gerente General"
+                                                },
+                                                "departamento_principal": {
+                                                    "type": "object"
+                                                },
+                                                "departamentos_acceso": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "colores_carnet": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -4776,16 +4845,18 @@
                         "maxLength": 100,
                         "example": "Recursos Humanos"
                     },
-                    "color": {
-                        "description": "Código de color hexadecimal",
-                        "type": "string",
-                        "maxLength": 7,
-                        "example": "#FF5733"
+                    "color_id": {
+                        "description": "ID del color característico del departamento",
+                        "type": "integer",
+                        "example": 1
                     },
                     "estado": {
                         "description": "Estado del departamento",
                         "type": "boolean",
                         "example": true
+                    },
+                    "color": {
+                        "$ref": "#/components/schemas/Color"
                     },
                     "created_at": {
                         "description": "Fecha de creación",
@@ -4968,14 +5039,14 @@
                         "example": true
                     },
                     "departamento": {
-                        "description": "Información del departamento",
+                        "description": "Departamento al que pertenece el cargo",
                         "type": "object"
                     },
-                    "colores": {
-                        "description": "Colores asociados a la estructura organizacional",
+                    "departamentos_acceso": {
+                        "description": "Departamentos a los que tiene acceso el cargo",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/Color"
+                            "$ref": "#/components/schemas/Departamento"
                         }
                     },
                     "created_at": {

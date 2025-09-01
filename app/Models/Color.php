@@ -71,15 +71,10 @@ class Color extends Model
         'updated_at' => 'datetime',
     ];
     
-    // Relación muchos a muchos con EstructuraOrganizacional
-    public function estructurasOrganizacionales()
+    // Relación uno a muchos con Departamentos (cada color puede ser usado por varios departamentos)
+    public function departamentos()
     {
-        return $this->belongsToMany(
-            EstructuraOrganizacional::class,
-            'estructura_organizacional_color',
-            'color_id',
-            'estructura_organizacional_id'
-        );
+        return $this->hasMany(Departamento::class, 'color_id');
     }
     
     // Scope para obtener solo colores activos

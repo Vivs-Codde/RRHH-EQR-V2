@@ -39,13 +39,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     @OA\Property(
  *         property="departamento",
  *         type="object",
- *         description="Información del departamento"
+ *         description="Departamento al que pertenece el cargo"
  *     ),
  *     @OA\Property(
- *         property="colores",
+ *         property="departamentos_acceso",
  *         type="array",
- *         @OA\Items(ref="#/components/schemas/Color"),
- *         description="Colores asociados a la estructura organizacional"
+ *         @OA\Items(ref="#/components/schemas/Departamento"),
+ *         description="Departamentos a los que tiene acceso el cargo"
  *     ),
  *     @OA\Property(
  *         property="created_at",
@@ -81,21 +81,27 @@ class EstructuraOrganizacional extends Model
         'updated_at' => 'datetime',
     ];
     
-    // Relación con Departamento (muchos a uno)
+    // Relación con Departamento al que pertenece el cargo (muchos a uno)
     public function departamento()
     {
         return $this->belongsTo(Departamento::class);
     }
     
-    // Relación muchos a muchos con Color
-    public function colores()
+    // Relación muchos a muchos con Departamentos a los que tiene acceso el cargo
+    public function departamentosAcceso()
     {
         return $this->belongsToMany(
-            Color::class,
+            Departamento::class,
             'estructura_organizacional_color',
             'estructura_organizacional_id',
-            'color_id'
-        );
+            'departamento_id'
+        )->withTimestamps();
+    }
+    
+    // Método para obtener los colores de los departamentos a los que tiene acceso
+    public function coloresAcceso()
+    {
+        return $this->departamentosAcceso()->with('color');
     }
     
     // Relación con Empleados (uno a muchos)
@@ -113,6 +119,6 @@ class EstructuraOrganizacional extends Model
     // Scope para incluir relaciones comunes
     public function scopeConRelaciones($query)
     {
-        return $query->with(['departamento', 'colores']);
+        return $query->with(['departamento', 'departamentosAcceso.color']);
     }
 }

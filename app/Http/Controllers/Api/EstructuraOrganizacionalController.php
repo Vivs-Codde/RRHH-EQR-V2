@@ -87,7 +87,7 @@ class EstructuraOrganizacionalController extends Controller
 
         // Incluir relaciones si se solicita
         if ($request->boolean('with_relations')) {
-            $query->conRelaciones();
+            $query->with(['departamento.color', 'departamentosAcceso.color']);
         }
 
         // Filtrar por estado si se proporciona
@@ -123,10 +123,10 @@ class EstructuraOrganizacionalController extends Controller
      *             @OA\Property(property="departamento_id", type="integer", example=1, description="ID del departamento al que pertenece la estructura"),
      *             @OA\Property(property="estado", type="boolean", example=true, description="Estado de la estructura (activa/inactiva). Default: true"),
      *             @OA\Property(
-     *                 property="colores",
+     *                 property="departamentos_acceso",
      *                 type="array",
      *                 @OA\Items(type="integer"),
-     *                 description="Array de IDs de colores a asociar (opcional)",
+     *                 description="Array de IDs de departamentos a los que tiene acceso el cargo",
      *                 example={1, 2, 3}
      *             )
      *         )
@@ -163,8 +163,8 @@ class EstructuraOrganizacionalController extends Controller
                 'cargo' => 'required|string|max:150',
                 'departamento_id' => 'required|integer|exists:departamentos,id',
                 'estado' => 'boolean',
-                'colores' => 'sometimes|array',
-                'colores.*' => 'integer|exists:color,id'
+                'departamentos_acceso' => 'sometimes|array',
+                'departamentos_acceso.*' => 'integer|exists:departamentos,id'
             ]);
 
             $validated['estado'] = $validated['estado'] ?? true;
@@ -176,13 +176,13 @@ class EstructuraOrganizacionalController extends Controller
                 'estado' => $validated['estado']
             ]);
 
-            // Asociar colores si se proporcionaron
-            if (isset($validated['colores'])) {
-                $estructura->colores()->sync($validated['colores']);
+            // Asociar departamentos de acceso si se proporcionaron
+            if (isset($validated['departamentos_acceso'])) {
+                $estructura->departamentosAcceso()->sync($validated['departamentos_acceso']);
             }
 
             // Cargar relaciones para la respuesta
-            $estructura->load(['departamento', 'colores']);
+            $estructura->load(['departamento.color', 'departamentosAcceso.color']);
 
             return response()->json([
                 'success' => true,
@@ -274,7 +274,7 @@ class EstructuraOrganizacionalController extends Controller
 
         // Incluir relaciones si se solicita
         if ($request->boolean('with_relations')) {
-            $query->conRelaciones();
+            $query->with(['departamento.color', 'departamentosAcceso.color']);
         }
 
         $estructura = $query->find($id);
@@ -405,20 +405,20 @@ class EstructuraOrganizacionalController extends Controller
                 'cargo' => 'sometimes|required|string|max:150',
                 'departamento_id' => 'sometimes|required|integer|exists:departamentos,id',
                 'estado' => 'sometimes|boolean',
-                'colores' => 'sometimes|array',
-                'colores.*' => 'integer|exists:color,id'
+                'departamentos_acceso' => 'sometimes|array',
+                'departamentos_acceso.*' => 'integer|exists:departamentos,id'
             ]);
 
             // Actualizar campos básicos
-            $estructura->update(collect($validated)->except('colores')->toArray());
+            $estructura->update(collect($validated)->except('departamentos_acceso')->toArray());
 
-            // Actualizar colores si se proporcionaron
-            if (isset($validated['colores'])) {
-                $estructura->colores()->sync($validated['colores']);
+            // Actualizar departamentos de acceso si se proporcionaron
+            if (isset($validated['departamentos_acceso'])) {
+                $estructura->departamentosAcceso()->sync($validated['departamentos_acceso']);
             }
 
             // Cargar relaciones para la respuesta
-            $estructura->load(['departamento', 'colores']);
+            $estructura->load(['departamento.color', 'departamentosAcceso.color']);
 
             return response()->json([
                 'success' => true,
@@ -530,9 +530,9 @@ class EstructuraOrganizacionalController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/estructuras-organizacionales/{id}/colores",
-     *     summary="Asociar colores a una estructura organizacional",
-     *     description="Asocia uno o más colores a una estructura organizacional específica",
+     *     path="/api/estructuras-organizacionales/{id}/departamentos-acceso",
+     *     summary="Asignar departamentos de acceso a una estructura organizacional",
+     *     description="Asigna múltiples departamentos de acceso a una estructura organizacional específica",
      *     tags={"Estructuras Organizacionales"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
@@ -545,23 +545,23 @@ class EstructuraOrganizacionalController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"colores"},
+     *             required={"departamentos"},
      *             @OA\Property(
-     *                 property="colores",
+     *                 property="departamentos",
      *                 type="array",
      *                 @OA\Items(type="integer"),
-     *                 description="Array de IDs de colores a asociar",
+     *                 description="Array de IDs de departamentos de acceso",
      *                 example={1, 2, 3}
      *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Colores asociados exitosamente"
+     *         description="Departamentos de acceso asignados exitosamente"
      *     )
      * )
      */
-    public function asociarColores(Request $request, string $id): JsonResponse
+    public function asignarDepartamentosAcceso(Request $request, string $id): JsonResponse
     {
         $estructura = EstructuraOrganizacional::find($id);
 
@@ -574,17 +574,17 @@ class EstructuraOrganizacionalController extends Controller
 
         try {
             $validated = $request->validate([
-                'colores' => 'required|array',
-                'colores.*' => 'integer|exists:color,id'
+                'departamentos' => 'required|array',
+                'departamentos.*' => 'integer|exists:departamentos,id'
             ]);
 
-            $estructura->colores()->sync($validated['colores']);
-            $estructura->load('colores');
+            $estructura->departamentosAcceso()->sync($validated['departamentos']);
+            $estructura->load(['departamento.color', 'departamentosAcceso.color']);
 
             return response()->json([
                 'success' => true,
                 'data' => $estructura,
-                'message' => 'Colores asociados exitosamente'
+                'message' => 'Departamentos de acceso asignados exitosamente'
             ]);
 
         } catch (ValidationException $e) {
@@ -594,5 +594,78 @@ class EstructuraOrganizacionalController extends Controller
                 'errors' => $e->errors()
             ], 422);
         }
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/estructuras-organizacionales/{id}/colores-carnet",
+     *     summary="Obtener colores para carnet de una estructura organizacional",
+     *     description="Obtiene los colores de los departamentos a los que tiene acceso el cargo (para impresión de carnets)",
+     *     tags={"Estructuras Organizacionales"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID de la estructura organizacional",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Colores para carnet obtenidos exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="cargo", type="string", example="Gerente General"),
+     *                 @OA\Property(property="departamento_principal", type="object"),
+     *                 @OA\Property(property="departamentos_acceso", type="array", @OA\Items(type="object")),
+     *                 @OA\Property(property="colores_carnet", type="array", @OA\Items(type="object"))
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function obtenerColoresCarnet(string $id): JsonResponse
+    {
+        $estructura = EstructuraOrganizacional::with(['departamento.color', 'departamentosAcceso.color'])
+            ->find($id);
+
+        if (!$estructura) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Estructura organizacional no encontrada'
+            ], 404);
+        }
+
+        // Obtener colores únicos de los departamentos de acceso
+        $coloresCarnet = $estructura->departamentosAcceso->pluck('color')->filter()->unique('id')->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'cargo' => $estructura->cargo,
+                'departamento_principal' => [
+                    'id' => $estructura->departamento->id,
+                    'nombre' => $estructura->departamento->nombre,
+                    'color' => $estructura->departamento->color
+                ],
+                'departamentos_acceso' => $estructura->departamentosAcceso->map(function ($dept) {
+                    return [
+                        'id' => $dept->id,
+                        'nombre' => $dept->nombre,
+                        'color' => $dept->color
+                    ];
+                }),
+                'colores_carnet' => $coloresCarnet->map(function ($color) {
+                    return [
+                        'id' => $color->id,
+                        'color' => $color->color,
+                        'codigo' => $color->codigo
+                    ];
+                })
+            ]
+        ]);
     }
 }

@@ -64,7 +64,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('estructuras-organizacionales', [EstructuraOrganizacionalController::class, 'store']);
     Route::put('estructuras-organizacionales/{id}', [EstructuraOrganizacionalController::class, 'update']);
     Route::delete('estructuras-organizacionales/{id}', [EstructuraOrganizacionalController::class, 'destroy']);
-    Route::post('estructuras-organizacionales/{id}/colores', [EstructuraOrganizacionalController::class, 'asociarColores']);
+    Route::post('estructuras-organizacionales/{id}/departamentos-acceso', [EstructuraOrganizacionalController::class, 'asignarDepartamentosAcceso']);
+    Route::get('estructuras-organizacionales/{id}/colores-carnet', [EstructuraOrganizacionalController::class, 'obtenerColoresCarnet']);
     
     // Rutas para empleados - quitamos el middleware temporalmente para diagnosticar
     Route::get('empleados', [EmpleadoController::class, 'index']);
