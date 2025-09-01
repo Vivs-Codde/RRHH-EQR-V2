@@ -139,6 +139,7 @@ class TipoContratoController extends Controller
      *     summary="Obtener un tipo de contrato específico",
      *     description="Retorna la información de un tipo de contrato por su ID",
      *     tags={"Tipos de Contrato"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -183,6 +184,7 @@ class TipoContratoController extends Controller
      *     summary="Actualizar un tipo de contrato",
      *     description="Actualiza un tipo de contrato existente",
      *     tags={"Tipos de Contrato"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -267,6 +269,7 @@ class TipoContratoController extends Controller
      *     summary="Eliminar un tipo de contrato",
      *     description="Elimina un tipo de contrato existente. Nota: Solo se puede eliminar si no tiene empleados asociados.",
      *     tags={"Tipos de Contrato"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",

@@ -148,6 +148,7 @@ class ColorController extends Controller
      *     summary="Obtener un color específico",
      *     description="Retorna la información de un color por su ID",
      *     tags={"Colores"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",

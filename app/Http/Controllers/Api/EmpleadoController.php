@@ -19,20 +19,6 @@ class EmpleadoController extends Controller
     /**
      * @OA\Get(
      *     path="/api/empleados",
-     *     summary="Obtener lista de empleados",
-     *     description="Retorna una lista paginada de todos los empleados",
-     *     tags={"Empleados"},
-     *     @OA\Parameter(name="page", in="query", description="Número de página", required=false, @OA\Schema(type="integer")),
-     *     @OA\Parameter(name="per_page", in="query", description="Elementos por página (máximo 100)", required=false, @OA\Schema(type="integer")),
-     *     @OA\Parameter(name="estado_rrhh", in="query", description="Filtrar por estado RRHH", required=false, @OA\Schema(type="boolean")),
-     *     @OA\Parameter(name="estado_As2", in="query", description="Filtrar por estado AS2", required=false, @OA\Schema(type="boolean")),
-     *     @OA\Parameter(name="with_relations", in="query", description="Incluir relaciones", required=false, @OA\Schema(type="boolean")),
-     *     @OA\Response(response=200, description="Lista de empleados obtenida exitosamente")
-     * )
-     */
-    /**
-     * @OA\Get(
-     *     path="/api/empleados",
      *     summary="Listar todos los empleados",
      *     description="Obtiene una lista paginada de todos los empleados con opciones de filtrado avanzadas",
      *     tags={"Empleados"},
@@ -272,6 +258,7 @@ class EmpleadoController extends Controller
      *     summary="Obtener un empleado específico",
      *     description="Retorna la información completa de un empleado por su ID",
      *     tags={"Empleados"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -329,6 +316,7 @@ class EmpleadoController extends Controller
      *     summary="Actualizar un empleado",
      *     description="Actualiza la información de un empleado existente",
      *     tags={"Empleados"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -451,6 +439,7 @@ class EmpleadoController extends Controller
      *     summary="Eliminar un empleado",
      *     description="Elimina un empleado del sistema (desactivación lógica)",
      *     tags={"Empleados"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",

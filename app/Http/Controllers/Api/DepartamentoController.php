@@ -105,13 +105,8 @@ class DepartamentoController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"nombre"},
-     *             @OA\Property(property="nombre", type="string", example="Tecnología e Innovación", description="Nombre del departamento"),
-     *             @OA\Property(property="descripcion", type="string", example="Departamento encargado del desarrollo tecnológico", description="Descripción detallada del departamento"),
-     *             @OA\Property(property="codigo", type="string", example="TI", description="Código identificador del departamento"),
-     *             @OA\Property(property="ubicacion", type="string", example="Piso 3, Edificio Central", description="Ubicación física del departamento"),
-     *             @OA\Property(property="telefono", type="string", example="3201234567", description="Teléfono del departamento"),
-     *             @OA\Property(property="email", type="string", example="ti@empresa.com", description="Email del departamento"),
-     *             @OA\Property(property="presupuesto", type="number", format="decimal", example=150000.00, description="Presupuesto asignado al departamento"),
+     *             @OA\Property(property="nombre", type="string", example="Recursos Humanos", description="Nombre del departamento"),
+     *             @OA\Property(property="color", type="string", example="#FF5733", description="Color hexadecimal del departamento"),
      *             @OA\Property(property="estado", type="boolean", example=true, description="Estado del departamento (activo/inactivo)")
      *         )
      *     ),
