@@ -76,7 +76,7 @@ class DepartamentoController extends Controller
     public function index(Request $request): JsonResponse
     {
         $perPage = min($request->get('per_page', 15), 100);
-        $query = Departamento::query();
+        $query = Departamento::with('color');
 
         if ($request->has('estado')) {
             $query->where('estado', $request->boolean('estado'));
@@ -106,7 +106,7 @@ class DepartamentoController extends Controller
      *         @OA\JsonContent(
      *             required={"nombre"},
      *             @OA\Property(property="nombre", type="string", example="Recursos Humanos", description="Nombre del departamento"),
-     *             @OA\Property(property="color", type="string", example="#FF5733", description="Color hexadecimal del departamento"),
+     *             @OA\Property(property="color_id", type="integer", example=1, description="ID del color del departamento"),
      *             @OA\Property(property="estado", type="boolean", example=true, description="Estado del departamento (activo/inactivo)")
      *         )
      *     ),
@@ -140,12 +140,15 @@ class DepartamentoController extends Controller
         try {
             $validated = $request->validate([
                 'nombre' => 'required|string|max:100|unique:departamentos,nombre',
-                'color' => 'nullable|string|max:7|regex:/^#[0-9A-Fa-f]{6}$/',
+                'color_id' => 'nullable|exists:color,id',
                 'estado' => 'boolean'
             ]);
 
             $validated['estado'] = $validated['estado'] ?? true;
             $departamento = Departamento::create($validated);
+
+            // Cargar la relación con el color para la respuesta
+            $departamento->load('color');
 
             return response()->json([
                 'success' => true,
@@ -199,7 +202,7 @@ class DepartamentoController extends Controller
      */
     public function show(Request $request, string $id): JsonResponse
     {
-        $query = Departamento::query();
+        $query = Departamento::with('color');
 
         if ($request->boolean('with_estructuras')) {
             $query->with('estructurasOrganizacionales');
@@ -239,12 +242,7 @@ class DepartamentoController extends Controller
      *         @OA\JsonContent(
      *             required={"nombre"},
      *             @OA\Property(property="nombre", type="string", example="Tecnología e Innovación Digital", description="Nombre del departamento"),
-     *             @OA\Property(property="descripcion", type="string", example="Departamento encargado del desarrollo tecnológico y transformación digital", description="Descripción detallada del departamento"),
-     *             @OA\Property(property="codigo", type="string", example="TID", description="Código identificador del departamento"),
-     *             @OA\Property(property="ubicacion", type="string", example="Piso 4, Edificio Central", description="Ubicación física del departamento"),
-     *             @OA\Property(property="telefono", type="string", example="3209876543", description="Teléfono del departamento"),
-     *             @OA\Property(property="email", type="string", example="tid@empresa.com", description="Email del departamento"),
-     *             @OA\Property(property="presupuesto", type="number", format="decimal", example=200000.00, description="Presupuesto asignado al departamento"),
+     *             @OA\Property(property="color_id", type="integer", example=1, description="ID del color del departamento"),
      *             @OA\Property(property="estado", type="boolean", example=true, description="Estado del departamento (activo/inactivo)")
      *         )
      *     ),
@@ -281,15 +279,18 @@ class DepartamentoController extends Controller
         try {
             $validated = $request->validate([
                 'nombre' => 'sometimes|required|string|max:100|unique:departamentos,nombre,' . $id,
-                'color' => 'sometimes|nullable|string|max:7|regex:/^#[0-9A-Fa-f]{6}$/',
+                'color_id' => 'sometimes|nullable|exists:color,id',
                 'estado' => 'sometimes|boolean'
             ]);
 
             $departamento->update($validated);
 
+            // Cargar la relación con el color para la respuesta
+            $departamento->load('color');
+
             return response()->json([
                 'success' => true,
-                'data' => $departamento->fresh(),
+                'data' => $departamento,
                 'message' => 'Departamento actualizado exitosamente'
             ]);
 

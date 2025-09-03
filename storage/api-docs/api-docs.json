@@ -891,8 +891,7 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "nombre",
-                                    "color_id"
+                                    "nombre"
                                 ],
                                 "properties": {
                                     "nombre": {
@@ -901,7 +900,7 @@
                                         "example": "Recursos Humanos"
                                     },
                                     "color_id": {
-                                        "description": "ID del color asignado al departamento",
+                                        "description": "ID del color del departamento",
                                         "type": "integer",
                                         "example": 1
                                     },
@@ -1078,36 +1077,10 @@
                                         "type": "string",
                                         "example": "Tecnología e Innovación Digital"
                                     },
-                                    "descripcion": {
-                                        "description": "Descripción detallada del departamento",
-                                        "type": "string",
-                                        "example": "Departamento encargado del desarrollo tecnológico y transformación digital"
-                                    },
-                                    "codigo": {
-                                        "description": "Código identificador del departamento",
-                                        "type": "string",
-                                        "example": "TID"
-                                    },
-                                    "ubicacion": {
-                                        "description": "Ubicación física del departamento",
-                                        "type": "string",
-                                        "example": "Piso 4, Edificio Central"
-                                    },
-                                    "telefono": {
-                                        "description": "Teléfono del departamento",
-                                        "type": "string",
-                                        "example": "3209876543"
-                                    },
-                                    "email": {
-                                        "description": "Email del departamento",
-                                        "type": "string",
-                                        "example": "tid@empresa.com"
-                                    },
-                                    "presupuesto": {
-                                        "description": "Presupuesto asignado al departamento",
-                                        "type": "number",
-                                        "format": "decimal",
-                                        "example": 200000
+                                    "color_id": {
+                                        "description": "ID del color del departamento",
+                                        "type": "integer",
+                                        "example": 1
                                     },
                                     "estado": {
                                         "description": "Estado del departamento (activo/inactivo)",
