@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\TipoContratoController;
 use App\Http\Controllers\Api\FincaController;
 use App\Http\Controllers\Api\DepartamentoController;
 use App\Http\Controllers\Api\RolePermissionController;
+use App\Http\Controllers\CentroCostoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,4 +96,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('departamentos', [DepartamentoController::class, 'store']);
     Route::put('departamentos/{id}', [DepartamentoController::class, 'update']);
     Route::delete('departamentos/{id}', [DepartamentoController::class, 'destroy']);
+    
+    // Rutas para centros de costo
+    Route::get('centro-costos', [CentroCostoController::class, 'index']);
+    Route::get('centro-costos/{id}', [CentroCostoController::class, 'show']);
+    Route::post('centro-costos', [CentroCostoController::class, 'store']);
+    Route::put('centro-costos/{id}', [CentroCostoController::class, 'update']);
+    Route::delete('centro-costos/{id}', [CentroCostoController::class, 'destroy']);
 });

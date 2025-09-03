@@ -4655,6 +4655,226 @@
                     }
                 ]
             }
+        },
+        "/api/centro-costos": {
+            "get": {
+                "tags": [
+                    "Centros de Costo"
+                ],
+                "summary": "Listar centros de costo",
+                "operationId": "a52c2ebf61fa543fcae9891c7517f66b",
+                "parameters": [
+                    {
+                        "name": "estado",
+                        "in": "query",
+                        "description": "Filtrar por estado (1=activo, 0=inactivo)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "grupo",
+                        "in": "query",
+                        "description": "Filtrar por grupo",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de centros de costo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CentroCosto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Centros de Costo"
+                ],
+                "summary": "Crear centro de costo",
+                "operationId": "52cbc1031dace34776f75a366d878141",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "tipo_contrato_id"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "maxLength": 150,
+                                        "example": "Nuevo Centro de Costo"
+                                    },
+                                    "estado": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "grupo": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "Administrativo"
+                                    },
+                                    "tipo_contrato_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Centro de costo creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CentroCosto"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/centro-costos/{id}": {
+            "get": {
+                "tags": [
+                    "Centros de Costo"
+                ],
+                "summary": "Obtener centro de costo por ID",
+                "operationId": "b660c9a5313b6023a8161c9cae8c5ab2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del centro de costo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Centro de costo encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CentroCosto"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Centro de costo no encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Centros de Costo"
+                ],
+                "summary": "Actualizar centro de costo",
+                "operationId": "8d05534b312160b30275b0b0f1843578",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del centro de costo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "maxLength": 150
+                                    },
+                                    "estado": {
+                                        "type": "boolean"
+                                    },
+                                    "grupo": {
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "tipo_contrato_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Centro de costo actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CentroCosto"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Centro de costo no encontrado"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Centros de Costo"
+                ],
+                "summary": "Eliminar centro de costo",
+                "operationId": "ae8f84cef3c38677723ed890bc04f9ec",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del centro de costo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Centro de costo eliminado exitosamente"
+                    },
+                    "404": {
+                        "description": "Centro de costo no encontrado"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -4758,6 +4978,50 @@
                             "type": "string",
                             "example": "crear usuarios"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "CentroCosto": {
+                "title": "Centro de Costo",
+                "description": "Modelo de Centro de Costo",
+                "properties": {
+                    "id": {
+                        "description": "ID único del centro de costo",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "description": "Nombre del centro de costo",
+                        "type": "string",
+                        "maxLength": 150,
+                        "example": "Administración"
+                    },
+                    "estado": {
+                        "description": "Estado del centro de costo",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "grupo": {
+                        "description": "Grupo al que pertenece el centro de costo",
+                        "type": "string",
+                        "maxLength": 100,
+                        "example": "Operacional"
+                    },
+                    "tipo_contrato_id": {
+                        "description": "ID del tipo de contrato relacionado",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de actualización",
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
@@ -5145,6 +5409,10 @@
         {
             "name": "Usuarios",
             "description": "API para gestión de usuarios"
+        },
+        {
+            "name": "Centros de Costo",
+            "description": "API para gestión de centros de costo"
         },
         {
             "name": "Estructuras Organizacionales",

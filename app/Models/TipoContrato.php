@@ -41,6 +41,12 @@ class TipoContrato extends Model
         return $this->hasMany(Empleado::class, 'tipo_contrato_id');
     }
     
+    // Relación uno a muchos con CentrosCosto
+    public function centrosCosto()
+    {
+        return $this->hasMany(CentroCosto::class, 'tipo_contrato_id');
+    }
+    
     // Scope para obtener solo tipos de contrato activos
     public function scopeActivos($query)
     {
